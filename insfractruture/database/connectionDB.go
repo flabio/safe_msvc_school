@@ -39,7 +39,7 @@ func CreateDatabase() string {
 	DB_PORT := os.Getenv("DB_PORT")
 	DB_SSLMODE := os.Getenv("DB_SSLMODE")
 	DB_NAME := os.Getenv("DB_NAME")
-	strConnection := fmt.Sprintf("host=%s user=%s password=%s port=%s sslmode=%", DB_HOST, DB_USER, DB_PASSWORD, DB_PORT, DB_SSLMODE)
+	strConnection := fmt.Sprintf("host=%s user=%s password=%s port=%s sslmode=%s", DB_HOST, DB_USER, DB_PASSWORD, DB_PORT, DB_SSLMODE)
 
 	//strConnection := fmt.Sprintf("host=%s  user=%s  password=%s  port=%s  sslmode=%s", DB_HOST, DB_USER, DB_PASSWORD, DB_PORT, DB_SSLMODE)
 	db, err := gorm.Open(postgres.Open(strConnection), &gorm.Config{})
