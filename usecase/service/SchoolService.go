@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/safe_msvc_user/clients/statesstruct"
 	"github.com/safe_msvc_user/core"
 	"github.com/safe_msvc_user/insfractruture/entities"
 	"github.com/safe_msvc_user/insfractruture/helpers"
@@ -128,14 +127,13 @@ func (s *SchoolService) UpdateSchool(c *fiber.Ctx) error {
 			utils.MESSAGE: utils.ID_NO_EXIST,
 		})
 	}
-	deepcopier.Copy(result).To(&updatedSchool)
-	stateExit, _ := statesstruct.MsvcStateFindById(result.StateId, c)
-	if stateExit.Id == 0 {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
-			utils.STATUS:  http.StatusBadRequest,
-			utils.MESSAGE: utils.STATE_NOT_FOUND,
-		})
-	}
+	// stateExit, _ := statesstruct.MsvcStateFindById(result.StateId, c)
+	// if stateExit.Id == 0 {
+	// 	return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+	// 		utils.STATUS:  http.StatusBadRequest,
+	// 		utils.MESSAGE: utils.STATE_NOT_FOUND,
+	// 	})
+	// }
 	schoolDto, msgError := ValidateSchool(uint(id), s, c)
 	if msgError != utils.EMPTY {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -143,7 +141,39 @@ func (s *SchoolService) UpdateSchool(c *fiber.Ctx) error {
 			utils.MESSAGE: msgError,
 		})
 	}
+
+	// Manejar el archivo subido
+	fileHeader, _ := c.FormFile(utils.FILE)
+
+	if fileHeader != nil {
+		// Guardar el archivo (opcional)
+		filePath := fmt.Sprintf(utils.UPLOADS_FILE, fileHeader.Filename)
+
+		err = c.SaveFile(fileHeader, filePath)
+		if err != nil {
+			return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+				utils.STATUS:  http.StatusBadRequest,
+				utils.MESSAGE: err.Error(),
+			})
+
+		}
+		urlFileName, err := helpers.UploadFileToS3(utils.AWS_BUCKET_NAME, fileHeader.Filename)
+		if err != nil {
+			return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+				utils.STATUS:  http.StatusBadRequest,
+				utils.MESSAGE: err.Error(),
+			})
+		}
+		if result.Url != "" {
+			// Borrar el archivo anterior de S3
+			helpers.RemoveFileToS3(utils.AWS_BUCKET_NAME, result.Url)
+
+		}
+		updatedSchool.Url = urlFileName
+	}
+
 	deepcopier.Copy(schoolDto).To(&updatedSchool)
+
 	user, err := s.UiSchool.UpdateSchool(uint(id), updatedSchool)
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
