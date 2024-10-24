@@ -30,7 +30,7 @@ func (c *OpenConnection) GetSchoolFindAll(begin int) ([]dto.SchoolResponseDTO, i
 	c.mux.Lock()
 	query := c.connection.Table("schools").Offset(begin).Limit(utils.LIMIT).Order(var_db.DB_ORDER_DESC).Find(&schoolEntities)
 	c.connection.Table("schools").Count(&countSchool)
-	defer database.CloseConnection()
+	//defer database.CloseConnection()
 	defer c.mux.Unlock()
 	return schoolEntities, countSchool, query.Error
 }
