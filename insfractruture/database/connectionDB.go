@@ -23,7 +23,7 @@ func DatabaseConnection() *gorm.DB {
 	dsn := fmt.Sprintf(strConnection+" dbname=%s", DB_NAME)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	MigrateDatabase(db)
 	return db
@@ -66,7 +66,7 @@ func CloseConnection() {
 	var db *gorm.DB = DatabaseConnection()
 	dbSQL, err := db.DB()
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	dbSQL.Close()
 }
