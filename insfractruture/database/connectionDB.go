@@ -23,7 +23,7 @@ func DatabaseConnection() *gorm.DB {
 	dsn := fmt.Sprintf(strConnection+" dbname=%s", DB_NAME)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	MigrateDatabase(db)
 	return db
@@ -41,7 +41,6 @@ func CreateDatabase() string {
 	//DB_NAME := os.Getenv("DB_NAME")
 	strConnection := fmt.Sprintf("host=%s user=%s password=%s port=%s sslmode=%s", DB_HOST, DB_USER, DB_PASSWORD, DB_PORT, DB_SSLMODE)
 
-	//strConnection := fmt.Sprintf("host=%s  user=%s  password=%s  port=%s  sslmode=%s", DB_HOST, DB_USER, DB_PASSWORD, DB_PORT, DB_SSLMODE)
 	_, err := gorm.Open(postgres.Open(strConnection), &gorm.Config{})
 	if err != nil {
 		log.Println(err.Error())
@@ -67,7 +66,7 @@ func CloseConnection() {
 	var db *gorm.DB = DatabaseConnection()
 	dbSQL, err := db.DB()
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	dbSQL.Close()
 }
