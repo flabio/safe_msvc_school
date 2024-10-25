@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
-	utils "github.com/flabio/safe_constants"
 	"github.com/gofiber/fiber/v2"
+	"github.com/safe_msvc_user/insfractruture/utils"
 )
 
 func MsvcStateFindById(id uint, c *fiber.Ctx) (StateResponse, string) {
