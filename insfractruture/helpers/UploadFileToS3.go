@@ -10,18 +10,18 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
-	"github.com/safe_msvc_user/insfractruture/utils"
+	constants "github.com/flabio/safe_constants"
 )
 
 func UploadFileToS3(bucket, filename string) (string, error) {
-	config, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(utils.AWS_REGION))
+	config, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(constants.AWS_REGION))
 	if err != nil {
 		log.Printf("Error loading SDK config, %v", err)
 		return "", err
 	}
 	client := s3.NewFromConfig(config)
 
-	file, err := os.Open(utils.UPLOADS + filename)
+	file, err := os.Open(constants.UPLOADS + filename)
 	if err != nil {
 		log.Printf("Error opening file %q, %v", filename, err)
 		return "", err
@@ -33,7 +33,7 @@ func UploadFileToS3(bucket, filename string) (string, error) {
 		Body:   file,
 		ACL:    types.ObjectCannedACLPublicRead, // Puedes ajustar los permisos según sea necesario, por ejemplo, PublicRead o Private.
 	})
-	publicURL := fmt.Sprintf(utils.AWS_URL_S3, bucket, filename)
+	publicURL := fmt.Sprintf(constants.AWS_URL_S3, bucket, filename)
 
 	file.Close()
 	if err != nil {
@@ -52,7 +52,7 @@ func UploadFileToS3(bucket, filename string) (string, error) {
 }
 
 func RemoveFileToS3(bucket, filename string) (string, error) {
-	config, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(utils.AWS_REGION))
+	config, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(constants.AWS_REGION))
 	if err != nil {
 		log.Printf("Error loading SDK config, %v", err)
 		return "", err

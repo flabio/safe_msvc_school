@@ -3,7 +3,7 @@ package service
 import (
 	"log"
 
-	utils "github.com/flabio/safe_constants"
+	constants "github.com/flabio/safe_constants"
 	"github.com/gofiber/fiber/v2"
 	"github.com/safe_msvc_user/insfractruture/helpers"
 	"github.com/safe_msvc_user/usecase/dto"
@@ -16,7 +16,7 @@ func ValidateSchool(id uint, s *SchoolService, c *fiber.Ctx) (dto.SchoolDTO, str
 		}
 	}()
 	var schoolDto dto.SchoolDTO
-	var msg string = utils.EMPTY
+	var msg string = constants.EMPTY
 
 	dataMap := make(map[string]string)
 	fields := []string{
@@ -43,16 +43,16 @@ func ValidateSchool(id uint, s *SchoolService, c *fiber.Ctx) (dto.SchoolDTO, str
 	helpers.MapToStructSchool(&schoolDto, dataMap)
 
 	/*msgValid := helpers.ValidateField(dataMap)
-	if msgValid != utils.EMPTY {
+	if msgValid != constants.EMPTY {
 		return dto.SchoolDTO{}, msgValid
 	}
 	*/
 	existEmail, _ := s.UiSchool.GetSchoolFindByEmail(id, schoolDto.Email)
-	if existEmail.Email != utils.EMPTY {
-		msg = utils.EMAIL_ALREADY_EXIST
+	if existEmail.Email != constants.EMPTY {
+		msg = constants.EMAIL_ALREADY_EXIST
 	}
 	existProviderNumber, _ := s.UiSchool.GetSchoolFindByProviderNumber(id, schoolDto.ProviderNumber)
-	if existProviderNumber.ProviderNumber != utils.EMPTY {
+	if existProviderNumber.ProviderNumber != constants.EMPTY {
 		msg = "The Provider number ready exists "
 	}
 	return schoolDto, msg
