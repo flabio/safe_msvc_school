@@ -3,10 +3,12 @@ package service
 import (
 	"fmt"
 	"net/http"
+	"path/filepath"
 	"strconv"
 
 	constants "github.com/flabio/safe_constants"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"github.com/safe_msvc_user/core"
 	"github.com/safe_msvc_user/insfractruture/entities"
 	"github.com/safe_msvc_user/insfractruture/helpers"
@@ -65,34 +67,8 @@ func (s *SchoolService) CreateSchool(c *fiber.Ctx) error {
 			constants.DATA:    msgError,
 		})
 	}
-	// Manejar el archivo subido
-	fileHeader, err := c.FormFile(constants.FILE)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			constants.STATUS:  http.StatusBadRequest,
-			constants.MESSAGE: err.Error(),
-			constants.DATA:    "",
-		})
-	}
-	// Guardar el archivo (opcional)
-	filePath := fmt.Sprintf(constants.UPLOADS_FILE, fileHeader.Filename)
 
-	err = c.SaveFile(fileHeader, filePath)
-	if err != nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
-			constants.STATUS:  http.StatusBadRequest,
-			constants.MESSAGE: err.Error(),
-		})
-
-	}
-
-	urlFileName, err := helpers.UploadFileToS3(constants.AWS_BUCKET_NAME, fileHeader.Filename)
-	if err != nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
-			constants.STATUS:  http.StatusBadRequest,
-			constants.MESSAGE: err.Error(),
-		})
-	}
+	urlFileName, err := getNameAvatar(c)
 	deepcopier.Copy(schoolDto).To(&schoolCreate)
 	schoolCreate.Url = urlFileName
 	data, err := s.UiSchool.CreateSchool(schoolCreate)
@@ -141,38 +117,9 @@ func (s *SchoolService) UpdateSchool(c *fiber.Ctx) error {
 		})
 	}
 
-	// Manejar el archivo subido
-	fileHeader, _ := c.FormFile(constants.FILE)
-
-	if fileHeader != nil {
-		// Guardar el archivo (opcional)
-		filePath := fmt.Sprintf(constants.UPLOADS_FILE, fileHeader.Filename)
-
-		err = c.SaveFile(fileHeader, filePath)
-		if err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{
-				constants.STATUS:  http.StatusBadRequest,
-				constants.MESSAGE: err.Error(),
-			})
-
-		}
-		urlFileName, err := helpers.UploadFileToS3(constants.AWS_BUCKET_NAME, fileHeader.Filename)
-		if err != nil {
-			return c.Status(http.StatusBadRequest).JSON(fiber.Map{
-				constants.STATUS:  http.StatusBadRequest,
-				constants.MESSAGE: err.Error(),
-			})
-		}
-		if result.Url != "" {
-			// Borrar el archivo anterior de S3
-			helpers.RemoveFileToS3(constants.AWS_BUCKET_NAME, result.Url)
-
-		}
-		updatedSchool.Url = urlFileName
-	}
-
+	urlFileName, err := getNameAvatar(c)
 	deepcopier.Copy(schoolDto).To(&updatedSchool)
-
+	updatedSchool.Url = urlFileName
 	user, err := s.UiSchool.UpdateSchool(uint(id), updatedSchool)
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -230,4 +177,28 @@ func Pagination(c *fiber.Ctx, limit int) (int, int) {
 
 	begin := (limit * page) - limit
 	return page, begin
+}
+
+func getNameAvatar(c *fiber.Ctx) (string, error) {
+	// Manejar el archivo subido
+	fileHeader, err := c.FormFile(constants.FILE)
+	if err != nil {
+		return "", err
+
+	}
+	newFileName := uuid.New().String()
+	ext := filepath.Ext(fileHeader.Filename)
+	fileName := newFileName + ext
+	// Guardar el archivo (opcional)
+	filePath := fmt.Sprintf(constants.UPLOADS_FILE, fileName)
+	err = c.SaveFile(fileHeader, filePath)
+	if err != nil {
+		return "", err
+
+	}
+	urlFileName, err := helpers.UploadFileToS3(constants.AWS_BUCKET_NAME, fileName)
+	if err != nil {
+		return "", err
+	}
+	return urlFileName, nil
 }

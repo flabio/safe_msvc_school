@@ -40,7 +40,7 @@ func UploadFileToS3(bucket, filename string) (string, error) {
 		log.Printf("Error uploading file %q to bucket %q, %v", filename, bucket, err)
 		return "", err
 	} else {
-		err := os.Remove(filename)
+		err := os.Remove(constants.UPLOADS + filename)
 		if err != nil {
 			log.Println(err)
 		} else {
