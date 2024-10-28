@@ -3,7 +3,7 @@ module github.com/safe_msvc_user
 go 1.22.3
 
 require (
-	github.com/flabio/safe_constants v0.0.0-20240826143739-226438bf7dad
+	github.com/flabio/safe_constants v1.1.0
 	github.com/flabio/safe_var_db v0.0.0-20240823121717-920baf4684b5
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/joho/godotenv v1.5.1

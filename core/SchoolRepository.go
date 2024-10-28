@@ -3,11 +3,11 @@ package core
 import (
 	"sync"
 
+	constants "github.com/flabio/safe_constants"
 	var_db "github.com/flabio/safe_var_db"
 	"github.com/safe_msvc_user/insfractruture/database"
 	"github.com/safe_msvc_user/insfractruture/entities"
 	"github.com/safe_msvc_user/insfractruture/ui/uicore"
-	"github.com/safe_msvc_user/insfractruture/utils"
 	"github.com/safe_msvc_user/usecase/dto"
 )
 
@@ -28,7 +28,7 @@ func (c *OpenConnection) GetSchoolFindAll(begin int) ([]dto.SchoolResponseDTO, i
 	var schoolEntities []dto.SchoolResponseDTO
 	var countSchool int64
 	c.mux.Lock()
-	query := c.connection.Table("schools").Offset(begin).Limit(utils.LIMIT).Order(var_db.DB_ORDER_DESC).Find(&schoolEntities)
+	query := c.connection.Table("schools").Offset(begin).Limit(constants.LIMIT).Order(var_db.DB_ORDER_DESC).Find(&schoolEntities)
 	c.connection.Table("schools").Count(&countSchool)
 	//defer database.CloseConnection()
 	defer c.mux.Unlock()

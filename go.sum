@@ -71,6 +71,8 @@ github.com/aws/smithy-go v1.22.0/go.mod h1:irrKGvNn1InZwb2d7fkIRNucdfwR8R+Ts3wxY
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/flabio/safe_constants v0.0.0-20240826143739-226438bf7dad h1:fIKDDmoo9viFgXvq+OwRK26OxnDt1MEumXU9ry61ul4=
 github.com/flabio/safe_constants v0.0.0-20240826143739-226438bf7dad/go.mod h1:6Gps5IgSi4RQlnkaKEwqPp7ysJVi9oeWnNNsEbnyUyU=
+github.com/flabio/safe_constants v1.1.0 h1:0DBeVwymMBJHn3cAhJyumKg8j7zqviCfUbY4E7G1f50=
+github.com/flabio/safe_constants v1.1.0/go.mod h1:6Gps5IgSi4RQlnkaKEwqPp7ysJVi9oeWnNNsEbnyUyU=
 github.com/flabio/safe_var_db v0.0.0-20240823121717-920baf4684b5 h1:W/ikEuJCqRiETW5U/NtqkWTXQ5Q6lPuhRoGzb0twYjw=
 github.com/flabio/safe_var_db v0.0.0-20240823121717-920baf4684b5/go.mod h1:6QAQ8XW1ATxPAxvt/Vfxg6uoVWqCQSJVkA5eDjA5+UI=
 github.com/gofiber/fiber/v2 v2.52.5 h1:tWoP1MJQjGEe4GB5TUGOi7P2E0ZMMRx5ZTG4rT+yGMo=
